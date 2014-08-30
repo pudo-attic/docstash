@@ -10,11 +10,17 @@ print list(stash)
 collection = stash.get('test')
 
 # import a file from the local working directory:
-collection.import_file('README.md')
+collection.ingest('README.md')
+
+# import an http resource:
+collection.ingest('http://pudo.org/index.html')
+
+#collection.ingest_dir('.')
 
 # iterate through each document and set a metadata
 # value:
 for doc in collection:
+    print doc
     with open(doc.file, 'rb') as fh:
         doc['body_length'] = len(fh.read())
     doc.save()

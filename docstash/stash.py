@@ -25,6 +25,11 @@ class Stash(object):
     def get(self, name):
         return Collection(self, name)
 
+    def documents(self):
+        for collection in self:
+            for document in collection:
+                yield document
+
     def __contains__(self, name):
         collection = Collection(name)
         return collection.exists()

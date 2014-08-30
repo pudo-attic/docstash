@@ -42,7 +42,11 @@ print list(stash)
 collection = stash.get('test')
 
 # import a file from the local working directory:
-collection.import_file('README.md')
+collection.ingest('README.md')
+
+# import an http resource:
+collection.ingest('http://pudo.org/index.html')
+# ingest will also accept file objects and httplib/urllib/requests responses
 
 # iterate through each document and set a metadata
 # value:
