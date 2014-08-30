@@ -22,7 +22,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "PyYAML>=3.11"
+        "PyYAML>=3.11",
+        "Werkzeug>=0.9.6"
     ],
     entry_points={},
     tests_require=[]
