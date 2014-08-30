@@ -1,16 +1,20 @@
-from os import path, listdir
+import os
 
 from docstash.collection import Collection
+from docstash import util
 
-            
+
 class Stash(object):
 
-    def __init__(self, path):
+    def __init__(self, path=None):
+        if path is None:
+            path = os.environ.get('DOCSTASH_PATH', '~/.docstash')
+        path = util.fullpath(path)
         self.path = path
 
     def collections(self):
-        if path.exists(self.path):
-            for dir in listdir(self.path):
+        if os.path.exists(self.path):
+            for dir in os.listdir(self.path):
                 collection = self.get(dir)
                 if collection.exists():
                     yield collection

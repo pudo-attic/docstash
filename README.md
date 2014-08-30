@@ -33,7 +33,7 @@ Example
 from docstash import Stash
 
 # open a stash in the current working directory:
-stash = Stash('.stash')
+stash = Stash(path='.stash')
 
 # print a list of collections:
 print list(stash)
@@ -58,6 +58,7 @@ The code for this library is very compact, go check it out.
 Configuration
 -------------
 
+The storage directory for the stash is an optional value. If it isn't passed in (or if it is ``None``), the value of the environment variable ``DOCSTASH_PATH`` will be used. If that variable is unused, docstash will default to ``~/.docstash``.
 
 
 License

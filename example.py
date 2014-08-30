@@ -1,7 +1,7 @@
 from docstash import Stash
 
 # open a stash in the current working directory:
-stash = Stash('.stash')
+stash = Stash(path='.stash')
 
 # print a list of collections:
 print list(stash)
