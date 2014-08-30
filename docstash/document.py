@@ -1,6 +1,7 @@
 from os import path, makedirs
 from collections import MutableMapping
 from datetime import datetime
+from lockfile import FileLock
 
 import yaml
 
@@ -15,6 +16,7 @@ class Document(MutableMapping):
         self.content_id = content_id
         self._path = None
         self._store = dict()
+        self._meta_lock = FileLock(self._meta_path)
         self._load_meta()
         if 'created_at' not in self._store:
             self._store['created_at'] = datetime.utcnow()
@@ -55,18 +57,20 @@ class Document(MutableMapping):
 
     def _load_meta(self):
         if path.exists(self._meta_path):
-            with open(self._meta_path, 'r') as fh:
-                self.update(yaml.load(fh.read()))
+            with self._meta_lock:
+                with open(self._meta_path, 'r') as fh:
+                    self.update(yaml.load(fh.read()))
 
     def save(self):
-        self._store['hash'] = self.content_id
-        self._store['updated_at'] = datetime.utcnow()
-        data = yaml.safe_dump(self._store,
-                              canonical=False,
-                              default_flow_style=False,
-                              indent=4)
-        with open(self._meta_path, 'w') as fh:
-            fh.write(data)
+        with self._meta_lock:
+            self._store['hash'] = self.content_id
+            self._store['updated_at'] = datetime.utcnow()
+            data = yaml.safe_dump(self._store,
+                                  canonical=False,
+                                  default_flow_style=False,
+                                  indent=4)
+            with open(self._meta_path, 'w') as fh:
+                fh.write(data)
             
     @property
     def _meta_path(self):

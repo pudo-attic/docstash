@@ -23,7 +23,8 @@ setup(
     zip_safe=False,
     install_requires=[
         "PyYAML>=3.11",
-        "Werkzeug>=0.9.6"
+        "Werkzeug>=0.9.6",
+        "lockfile>=0.9.1"
     ],
     entry_points={},
     tests_require=[]
