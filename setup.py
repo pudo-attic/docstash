@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='docstash',
-    version='0.1',
+    version='0.2',
     description="Store a set of documents and metadata in an organized way",
     long_description="",
     classifiers=[
