@@ -3,7 +3,7 @@ docstash
 
 A simple mechanism for storing a (potentially large) set of immutable documents in an organized way. Metadata is stored along with the data as a YAML file.
 
-``docstash`` is inspired by [BagIt](https://github.com/LibraryOfCongress/bagit-python) and [Pairtree](https://pythonhosted.org/Pairtree/).
+``docstash`` is inspired by [OFS](https://github.com/okfn/ofs), [BagIt](https://github.com/LibraryOfCongress/bagit-python) and [Pairtree](https://pythonhosted.org/Pairtree/).
 
 
 Installation
