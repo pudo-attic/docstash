@@ -1,4 +1,4 @@
-from os import path, walk, close
+from os import path, walk, close, unlink
 from tempfile import mkstemp
 import shutil
 
@@ -54,10 +54,13 @@ class Collection(object):
             kwargs['hash'] = util.checksum(file_path)
         doc = Document(self, kwargs['hash'], **kwargs)
         if file_path != doc.file:
-            if _move:
-                shutil.move(file_path, doc.file)
-            else:
-                shutil.copyfile(file_path, doc.file)
+            if not path.exists(doc.file):
+                if _move:
+                    shutil.move(file_path, doc.file)
+                else:
+                    shutil.copyfile(file_path, doc.file)
+            elif _move:
+                unlink(file_path)
         doc.save()
         return doc
 
