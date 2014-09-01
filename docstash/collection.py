@@ -68,7 +68,7 @@ class Collection(object):
         for (dirpath, dirnames, file_names) in walk(dir_path):
             for file_name in file_names:
                 file_path = path.join(dirpath, file_name)
-                self.import_file(file_path, **kwargs)
+                self.ingest_file(file_path, **kwargs)
 
     def __repr__(self):
         return '<Collection(%s, %s)>' % (self.stash.path, self.name)
