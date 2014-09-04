@@ -46,6 +46,9 @@ class Document(MutableMapping):
     def __delitem__(self, key):
         del self._store[self.__keytransform__(key)]
 
+    def __contains__(self, key):
+        return self.__keytransform__(key) in self._store
+
     def __iter__(self):
         return iter(self._store)
 
