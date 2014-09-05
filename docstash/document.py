@@ -15,10 +15,11 @@ class Document(MutableMapping):
         self.stash = collection.stash
         self.content_id = content_id
         self._path = None
-        self._store = dict()
+        self.meta = dict()
+        self._meta_lock = FileLock(self._meta_path)
         self._load_meta()
-        if 'created_at' not in self._store:
-            self._store['created_at'] = datetime.utcnow()
+        if 'created_at' not in self.meta:
+            self.meta['created_at'] = datetime.utcnow()
         self.update(dict(**kwargs))
 
     @property
@@ -37,22 +38,22 @@ class Document(MutableMapping):
         return path.join(self.path, self.get('file'))
 
     def __getitem__(self, key):
-        return self._store[self.__keytransform__(key)]
+        return self.meta[self.__keytransform__(key)]
 
     def __setitem__(self, key, value):
-        self._store[self.__keytransform__(key)] = value
+        self.meta[self.__keytransform__(key)] = value
 
     def __delitem__(self, key):
-        del self._store[self.__keytransform__(key)]
+        del self.meta[self.__keytransform__(key)]
 
     def __contains__(self, key):
-        return self.__keytransform__(key) in self._store
+        return self.__keytransform__(key) in self.meta
 
     def __iter__(self):
-        return iter(self._store)
+        return iter(self.meta)
 
     def __len__(self):
-        return len(self._store)
+        return len(self.meta)
 
     def __keytransform__(self, key):
         return key.lower()
@@ -61,19 +62,22 @@ class Document(MutableMapping):
         try:
             if path.exists(self._meta_path):
                 with open(self._meta_path, 'r') as fh:
-                    self.update(yaml.load(fh.read()))
+                    with self._meta_lock:
+                        self.update(yaml.load(fh.read()))
         except (ValueError, TypeError):
             pass
 
     def save(self):
-        self._store['hash'] = self.content_id
-        self._store['updated_at'] = datetime.utcnow()
-        data = yaml.safe_dump(self._store,
+        self._meta_lock.acquire()
+        self.meta['hash'] = self.content_id
+        self.meta['updated_at'] = datetime.utcnow()
+        data = yaml.safe_dump(self.meta,
                               canonical=False,
                               default_flow_style=False,
                               indent=4)
         with open(self._meta_path, 'w') as fh:
-            fh.write(data)
+            with self._meta_lock:
+                fh.write(data)
             
     @property
     def _meta_path(self):
