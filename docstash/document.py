@@ -58,9 +58,12 @@ class Document(MutableMapping):
         return key.lower()
 
     def _load_meta(self):
-        if path.exists(self._meta_path):
-            with open(self._meta_path, 'r') as fh:
-                self.update(yaml.load(fh.read()))
+        try:
+            if path.exists(self._meta_path):
+                with open(self._meta_path, 'r') as fh:
+                    self.update(yaml.load(fh.read()))
+        except (ValueError, TypeError):
+            pass
 
     def save(self):
         self._store['hash'] = self.content_id
