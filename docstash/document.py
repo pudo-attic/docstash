@@ -1,11 +1,13 @@
 from os import path, makedirs
 from collections import MutableMapping
 from datetime import datetime
-from lockfile import FileLock
+from threading import Lock
 
 import yaml
 
 from docstash import util
+
+lock = Lock()
 
 
 class Document(MutableMapping):
@@ -16,7 +18,6 @@ class Document(MutableMapping):
         self.content_id = content_id
         self._path = None
         self.meta = dict()
-        self._meta_lock = FileLock(self._meta_path)
         self._load_meta()
         if 'created_at' not in self.meta:
             self.meta['created_at'] = datetime.utcnow()
@@ -62,7 +63,7 @@ class Document(MutableMapping):
         try:
             if path.exists(self._meta_path):
                 with open(self._meta_path, 'r') as fh:
-                    with self._meta_lock:
+                    with lock:
                         self.update(yaml.load(fh.read()))
         except (ValueError, TypeError):
             pass
@@ -76,7 +77,7 @@ class Document(MutableMapping):
                               default_flow_style=False,
                               indent=4)
         with open(self._meta_path, 'w') as fh:
-            with self._meta_lock:
+            with lock:
                 fh.write(data)
             
     @property
